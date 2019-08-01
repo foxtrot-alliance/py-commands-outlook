@@ -13,7 +13,7 @@
 * [-cc "xyz; xyz; xyz"]
 * [-bcc "xyz; xyz; xyz"]
 * -subject "xyz"
-* -body "xyz<br><br>xyz"
+* -body "xyz"
 * -attachments "c:\test.txt, c:\test2.txt"
 * [-download_path "c:\"] (N/A)
 * [-draft" "true"/"false"]
