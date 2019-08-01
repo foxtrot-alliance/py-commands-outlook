@@ -17,3 +17,8 @@
 * -attachments "c:\test.txt, c:\test2.txt"
 * [-download_path "c:\"] (N/A)
 * [-draft" "true"/"false"]
+
+## Example
+```
+EXE_PATH -command "send" -to "mbalslow@foxtrotalliance.com" -cc "mbalslow@gmail.com" -subject "Sending emails!" -body "Pretty cool,<br>Right?!" -attachments "C:\test1.png, C:\test2.png" -account "mbalslow@foxtrotalliance.com"
+```
