@@ -1,5 +1,7 @@
 # py-commands-outlook
 
+<i>Still under development...</i> Currently supports sending emails, nothing more. Functionality to read, move, delete, answer, forward emails and download attachments is coming. 
+
 ## Installation
 [Download](https://github.com/foxtrot-alliance/py-commands-outlook/releases/download/v0.0.2/py-commands-outlook_v0.0.2.zip)
 
