@@ -144,11 +144,25 @@ def validate_project_parameters(parameters):
 
     if command.upper() == "SEND":
         command = "SEND"
+    elif command.upper() == "GET_ALL":
+        command = "GET_ALL"
     elif not command == "":
         return "ERROR: Invalid command parameter! Parameter = " + str(command)
 
     if traces is True:
         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tCommand = " + str(command))
+
+    if traces is True:
+        print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tAccount = " + str(account))
+
+    if traces is True:
+        print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tFolder = " + str(folder))
+
+    if by.upper() is not "" and not "@" in by:
+        return "ERROR: Invalid by parameter! Parameter = " + str(by)
+
+    if traces is True:
+        print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tCc = " + str(cc))
 
     if command.upper() == "SEND":
         if to.upper() == "" or not "@" in to:
@@ -157,16 +171,14 @@ def validate_project_parameters(parameters):
     if traces is True:
         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tTo = " + str(to))
 
-    if cc.upper() is not "":
-        if not "@" in cc:
-            return "ERROR: Invalid cc parameter! Parameter = " + str(cc)
+    if cc.upper() is not "" and not "@" in cc:
+        return "ERROR: Invalid cc parameter! Parameter = " + str(cc)
 
     if traces is True:
         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tCc = " + str(cc))
 
-    if bcc.upper() is not "":
-        if not "@" in bcc:
-            return "ERROR: Invalid bcc parameter! Parameter = " + str(bcc)
+    if bcc.upper() is not "" and not "@" in bcc:
+        return "ERROR: Invalid bcc parameter! Parameter = " + str(bcc)
 
     if traces is True:
         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tBcc = " + str(bcc))
@@ -176,16 +188,6 @@ def validate_project_parameters(parameters):
         
     if traces is True:
         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tBody = " + str(body))
-    
-    if draft == "" or draft.upper() == "FALSE":
-        draft = False
-    elif draft.upper() == "TRUE":
-        draft = True
-    else:
-        return "ERROR: Invalid draft parameter! Parameter = " + str(draft)
-
-    if traces is True:
-        print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tDraft = " + str(draft))
 
     if command.upper() == "SEND" and attachments is not "":
         attachments = attachments.replace(";", ",")
@@ -198,6 +200,22 @@ def validate_project_parameters(parameters):
 
     if traces is True:
         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tAttachments = " + str(attachments))
+        
+    if download_path is not "" and not os.path.exists(download_path):
+        return "ERROR: The specified download path does not exist! Download path = " + str(download_path)
+
+    if traces is True:
+        print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tDownload path = " + str(download_path))
+    
+    if draft == "" or draft.upper() == "FALSE":
+        draft = False
+    elif draft.upper() == "TRUE":
+        draft = True
+    else:
+        return "ERROR: Invalid draft parameter! Parameter = " + str(draft)
+
+    if traces is True:
+        print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tDraft = " + str(draft))
 
     if traces is True:
         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "=== * Parameters retrieved end * ===")
