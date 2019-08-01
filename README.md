@@ -1,7 +1,7 @@
 # py-commands-outlook
 
 ## Installation
-[Download](https://github.com/foxtrot-alliance/py-commands-outlook/releases/download/v0.0.1/py-commands-outlook_v0.0.1.zip)
+[Download](https://github.com/foxtrot-alliance/py-commands-outlook/releases/download/v0.0.2/py-commands-outlook_v0.0.2.zip)
 
 ## Parameters
 * [-traces "true"/"false"]
