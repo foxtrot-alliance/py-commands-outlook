@@ -303,7 +303,7 @@ def validate_project_parameters(parameters):
 def get_emails(emails):
     
     data = []
-    data.append(['EntryID', 'ReceivedDate', 'ReceivedTime', 'UnRead', 'Sender', 'Cc', 'Subject', 'AttachmentsCount', 'Attachments'])
+    data.append(['email_id', 'received_date', 'received_time', 'read', 'sender', 'cc', 'subject', 'attachment_count', 'atachment_names'])
     
     for email in emails:
         email_info = []
@@ -312,7 +312,7 @@ def get_emails(emails):
         email_info.append(str(email.ReceivedTime.month) + '/' + str(email.ReceivedTime.day) + '/' + str(email.ReceivedTime.year))
         email_info.append(str(email.ReceivedTime.hour).zfill(2) + ':' + str(email.ReceivedTime.minute).zfill(2) + ':' + str(email.ReceivedTime.second).zfill(2))
         email_info.append(not email.UnRead)
-        email_info.append(str(email.Sender) + " (" + str(email.SenderEmailAddress) + ")")
+        email_info.append(str(email.SenderEmailAddress))
         email_info.append(email.Cc)
         email_info.append(email.Subject)
         email_info.append(email.Attachments.Count)
