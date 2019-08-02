@@ -2,6 +2,8 @@
 
 <i>Still under development...</i>
 
+https://support.microsoft.com/en-us/help/3189806/a-program-is-trying-to-send-an-e-mail-message-on-your-behalf-warning-i
+
 ## Installation
 [Download](https://github.com/foxtrot-alliance/py-commands-outlook/releases/download/v0.0.3/py-commands-outlook_v0.0.3.zip)
 
