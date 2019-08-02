@@ -7,7 +7,7 @@
 
 ## Parameters
 * [-traces "true"/"false"]
-* -command "send"
+* -command "send","get", "read", "move", "delete", "mark", "save", "reply", "forward", "attachments"
 * [-account "x@y.com"]
 * [-folder "xyz"] (N/A)
 * [-by "xyz"] (N/A)
@@ -17,7 +17,8 @@
 * -subject "xyz"
 * -body "xyz"
 * [-attachments "c:\test.txt, c:\test2.txt"]
-* [-download_path "c:\"] (N/A)
+* [-read "true"/"false"]
+* [-path "c:\"] (N/A)
 * [-draft" "true"/"false"]
 
 ## Example
