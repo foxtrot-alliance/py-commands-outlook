@@ -1,3 +1,4 @@
+import csv
 import sys
 import os.path
 import datetime
@@ -87,12 +88,12 @@ def retrieve_project_parameters():
     else:
         body = ""
 
-    parameters_number = parameters.index("-read") if "-read" in parameters else None
+    parameters_number = parameters.index("-unread") if "-unread" in parameters else None
     if parameters_number is not None:
         parameters_number = parameters_number + 1
-        read = parameters[parameters_number]
+        unread = parameters[parameters_number]
     else:
-        read = ""
+        unread = ""
 
     parameters_number = parameters.index("-attachments") if "-attachments" in parameters else None
     if parameters_number is not None:
@@ -114,6 +115,13 @@ def retrieve_project_parameters():
         draft = parameters[parameters_number]
     else:
         draft = ""
+
+    parameters_number = parameters.index("-delimiter") if "-delimiter" in parameters else None
+    if parameters_number is not None:
+        parameters_number = parameters_number + 1
+        delimiter = parameters[parameters_number]
+    else:
+        delimiter = ""
         
     return {
         "traces": traces,
@@ -127,10 +135,11 @@ def retrieve_project_parameters():
         "bcc": bcc,
         "subject": subject,
         "body": body,
-        "read": read,
+        "unread": unread,
         "attachments": attachments,
         "path": path,
         "draft": draft,
+        "delimiter": delimiter,
     }
 
 
@@ -147,10 +156,11 @@ def validate_project_parameters(parameters):
     bcc = parameters["bcc"]
     subject = parameters["subject"]
     body = parameters["body"]
-    read = parameters["read"]
+    unread = parameters["unread"]
     attachments = parameters["attachments"]
     path = parameters["path"]
     draft = parameters["draft"]
+    delimiter = parameters["delimiter"]
     
     if traces == "" or traces.upper() == "FALSE":
         traces = False
@@ -232,16 +242,16 @@ def validate_project_parameters(parameters):
     if traces is True:
         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tBody = " + str(body))
         
-    if read is not "":
-        if read.upper() == "TRUE":
-            read = True
-        elif read.upper() == "FALSE":
-            read = False
+    if unread is not "":
+        if unread.upper() == "TRUE":
+            unread = True
+        elif unread.upper() == "FALSE":
+            unread = False
         else:
-            return "ERROR: Invalid read parameter! Parameter = " + str(read)
+            return "ERROR: Invalid unread parameter! Parameter = " + str(unread)
             
     if traces is True:
-        print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tRead = " + str(read))
+        print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tUnread = " + str(unread))
 
     if command.upper() == "SEND" and attachments is not "":
         attachments = attachments.replace(";", ",")
@@ -255,14 +265,16 @@ def validate_project_parameters(parameters):
     if traces is True:
         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tAttachments = " + str(attachments))
         
-    if path is not "":
-        if command.upper() == "SAVE" and not os.path.exists(os.path.dirname(path)):
+    if command.upper() == "GET" or command.upper() == "SAVE":
+        if not os.path.exists(os.path.dirname(path)):
             return "ERROR: The specified save path does not exist! Save path = " + str(os.path.dirname(path))
+        elif command.upper() == "GET" and not str(os.path.basename(path)).endswith('.csv'):
+            return "ERROR: The specified filename must end with '.csv'! Filename = " + str(os.path.basename(path))
         elif command.upper() == "SAVE" and not str(os.path.basename(path)).endswith('.msg'):
             return "ERROR: The specified filename must end with '.msg'! Filename = " + str(os.path.basename(path))
         
         if command.upper() == "ATTACHMENTS" and not os.path.exists(path):
-            return "ERROR: The specified save path does not exist! Save path = " + str(path)
+                return "ERROR: The specified save path does not exist! Save path = " + str(path)
 
     if traces is True:
         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tDownload path = " + str(path))
@@ -277,6 +289,13 @@ def validate_project_parameters(parameters):
 
     if traces is True:
         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tDraft = " + str(draft))
+
+    if command.upper() == "GET":
+        if delimiter is "" or delimiter not in [",", ";", "|"]:
+            return "ERROR: Invalid delimiter parameter! It must by either ',' or ';' or '|'. Parameter = " + str(delimiter)
+
+    if traces is True:
+        print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tDelimiter = " + str(delimiter))
 
     if traces is True:
         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "=== * Parameters retrieved end * ===")
@@ -293,17 +312,18 @@ def validate_project_parameters(parameters):
         "bcc": bcc,
         "subject": subject,
         "body": body,
-        "read": read,
+        "unread": unread,
         "attachments": attachments,
         "path": path,
         "draft": draft,
+        "delimiter": delimiter,
     }
     
     
-def get_emails(emails):
+def get_emails(emails, delimiter):
     
     data = []
-    data.append(['email_id', 'received_date', 'received_time', 'read', 'sender', 'cc', 'subject', 'attachment_count', 'atachment_names'])
+    data.append(['email_id', 'received_date', 'received_time', 'unread', 'sender_name', 'sender_email', 'cc', 'subject', 'attachment_count', 'atachment_names'])
     
     for email in emails:
         email_info = []
@@ -311,15 +331,24 @@ def get_emails(emails):
         email_info.append(email.EntryID)
         email_info.append(str(email.ReceivedTime.month) + '/' + str(email.ReceivedTime.day) + '/' + str(email.ReceivedTime.year))
         email_info.append(str(email.ReceivedTime.hour).zfill(2) + ':' + str(email.ReceivedTime.minute).zfill(2) + ':' + str(email.ReceivedTime.second).zfill(2))
-        email_info.append(not email.UnRead)
-        email_info.append(str(email.SenderEmailAddress))
+        email_info.append(str(email.UnRead))
+        try:
+            email_info.append(str(email.Sender))
+        except:
+            email_info.append("")
+        try:
+            email_info.append(str(email.Sender.GetExchangeUser().PrimarySmtpAddress))
+        except:
+            email_info.append(str(email.SenderEmailAddress))
         email_info.append(email.Cc)
         email_info.append(email.Subject)
         email_info.append(email.Attachments.Count)
         attachments = []
         for attachment in email.Attachments:
             attachments.append(attachment.DisplayName)
-        email_info.append(attachments)
+        email_info.append([str(attachment).replace(delimiter, '') for attachment in attachments])
+        
+        email_info = [str(info).replace(delimiter, '') for info in email_info]
         
         data.append(email_info)
     
@@ -377,10 +406,11 @@ def execute_command(parameters):
     bcc = parameters["bcc"]
     subject = parameters["subject"]
     body = parameters["body"]
-    read = parameters["read"]
+    unread = parameters["unread"]
     attachments = parameters["attachments"]
     path = parameters["path"]
     draft = parameters["draft"]
+    delimiter = parameters["delimiter"]
     
     outlook = win32.Dispatch('Outlook.Application')
     outlook_accounts = outlook.Session.Accounts
@@ -461,8 +491,11 @@ def execute_command(parameters):
                 if traces is True:
                     print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tLooping through emails in the folder...")
                         
-                emails = get_emails(outlook_folder.Items)
-                print(emails)
+                data = get_emails(outlook_folder.Items, delimiter)
+                
+                with open(path, 'w', newline='') as csv_file:
+                    writer = csv.writer(csv_file, delimiter=delimiter, quotechar='"', quoting=csv.QUOTE_ALL)
+                    writer.writerows(data)
                     
                 if traces is True:
                     print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tAll emails retrieved!")
@@ -524,9 +557,9 @@ def execute_command(parameters):
                 elif command.upper() == "MARK":
                     if traces is True:
                         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "=== * Marking email start * ===")
-                        print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + f"\tAttempting to mark the email {'read' if read else 'unread'}...")
+                        print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + f"\tAttempting to mark the email {'unread' if unread else 'read'}...")
                         
-                    outlook_email.UnRead = not read
+                    outlook_email.UnRead = unread
                             
                     if traces is True:
                         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tDeleting email complete!")
