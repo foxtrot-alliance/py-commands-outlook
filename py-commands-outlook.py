@@ -46,13 +46,6 @@ def retrieve_project_parameters():
     else:
         folder = ""
 
-    parameters_number = parameters.index("-by") if "-by" in parameters else None
-    if parameters_number is not None:
-        parameters_number = parameters_number + 1
-        by = parameters[parameters_number]
-    else:
-        by = ""
-
     parameters_number = parameters.index("-to") if "-to" in parameters else None
     if parameters_number is not None:
         parameters_number = parameters_number + 1
@@ -129,7 +122,6 @@ def retrieve_project_parameters():
         "account": account,
         "email": email,
         "folder": folder,
-        "by": by,
         "to": to,
         "cc": cc,
         "bcc": bcc,
@@ -150,7 +142,6 @@ def validate_project_parameters(parameters):
     account = parameters["account"]
     email = parameters["email"]
     folder = parameters["folder"]
-    by = parameters["by"]
     to = parameters["to"]
     cc = parameters["cc"]
     bcc = parameters["bcc"]
@@ -210,9 +201,6 @@ def validate_project_parameters(parameters):
 
     if traces is True:
         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tFolder = " + str(folder))
-
-    if by.upper() is not "" and not "@" in by:
-        return "ERROR: Invalid by parameter! Parameter = " + str(by)
 
     if traces is True:
         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tCc = " + str(cc))
@@ -292,7 +280,7 @@ def validate_project_parameters(parameters):
 
     if command.upper() == "GET":
         if delimiter is "" or delimiter not in [",", ";", "|"]:
-            return "ERROR: Invalid delimiter parameter! It must by either ',' or ';' or '|'. Parameter = " + str(delimiter)
+            return "ERROR: Invalid delimiter parameter! It must be either ',' or ';' or '|'. Parameter = " + str(delimiter)
 
     if traces is True:
         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tDelimiter = " + str(delimiter))
@@ -306,7 +294,6 @@ def validate_project_parameters(parameters):
         "account": account,
         "email": email,
         "folder": folder,
-        "by": by,
         "to": to,
         "cc": cc,
         "bcc": bcc,
@@ -400,7 +387,6 @@ def execute_command(parameters):
     account = parameters["account"]
     email = parameters["email"]
     folder = parameters["folder"]
-    by = parameters["by"]
     to = parameters["to"]
     cc = parameters["cc"]
     bcc = parameters["bcc"]
