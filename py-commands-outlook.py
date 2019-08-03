@@ -39,13 +39,6 @@ def retrieve_project_parameters():
     else:
         email = ""
 
-    parameters_number = parameters.index("-folder") if "-folder" in parameters else None
-    if parameters_number is not None:
-        parameters_number = parameters_number + 1
-        folder = parameters[parameters_number]
-    else:
-        folder = ""
-
     parameters_number = parameters.index("-to") if "-to" in parameters else None
     if parameters_number is not None:
         parameters_number = parameters_number + 1
@@ -81,26 +74,12 @@ def retrieve_project_parameters():
     else:
         body = ""
 
-    parameters_number = parameters.index("-unread") if "-unread" in parameters else None
-    if parameters_number is not None:
-        parameters_number = parameters_number + 1
-        unread = parameters[parameters_number]
-    else:
-        unread = ""
-
     parameters_number = parameters.index("-attachments") if "-attachments" in parameters else None
     if parameters_number is not None:
         parameters_number = parameters_number + 1
         attachments = parameters[parameters_number]
     else:
         attachments = ""
-
-    parameters_number = parameters.index("-path") if "-path" in parameters else None
-    if parameters_number is not None:
-        parameters_number = parameters_number + 1
-        path = parameters[parameters_number]
-    else:
-        path = ""
 
     parameters_number = parameters.index("-draft") if "-draft" in parameters else None
     if parameters_number is not None:
@@ -109,29 +88,50 @@ def retrieve_project_parameters():
     else:
         draft = ""
 
+    parameters_number = parameters.index("-folder") if "-folder" in parameters else None
+    if parameters_number is not None:
+        parameters_number = parameters_number + 1
+        folder = parameters[parameters_number]
+    else:
+        folder = ""
+
+    parameters_number = parameters.index("-path") if "-path" in parameters else None
+    if parameters_number is not None:
+        parameters_number = parameters_number + 1
+        path = parameters[parameters_number]
+    else:
+        path = ""
+
     parameters_number = parameters.index("-delimiter") if "-delimiter" in parameters else None
     if parameters_number is not None:
         parameters_number = parameters_number + 1
         delimiter = parameters[parameters_number]
     else:
         delimiter = ""
+
+    parameters_number = parameters.index("-unread") if "-unread" in parameters else None
+    if parameters_number is not None:
+        parameters_number = parameters_number + 1
+        unread = parameters[parameters_number]
+    else:
+        unread = ""
         
     return {
         "traces": traces,
         "command": command,
         "account": account,
         "email": email,
-        "folder": folder,
         "to": to,
         "cc": cc,
         "bcc": bcc,
         "subject": subject,
         "body": body,
-        "unread": unread,
         "attachments": attachments,
-        "path": path,
         "draft": draft,
+        "folder": folder,
+        "path": path,
         "delimiter": delimiter,
+        "unread": unread,
     }
 
 
@@ -141,17 +141,17 @@ def validate_project_parameters(parameters):
     command = parameters["command"]
     account = parameters["account"]
     email = parameters["email"]
-    folder = parameters["folder"]
     to = parameters["to"]
     cc = parameters["cc"]
     bcc = parameters["bcc"]
     subject = parameters["subject"]
     body = parameters["body"]
-    unread = parameters["unread"]
     attachments = parameters["attachments"]
-    path = parameters["path"]
     draft = parameters["draft"]
+    folder = parameters["folder"]
+    path = parameters["path"]
     delimiter = parameters["delimiter"]
+    unread = parameters["unread"]
     
     if traces == "" or traces.upper() == "FALSE":
         traces = False
@@ -199,12 +199,6 @@ def validate_project_parameters(parameters):
     if traces is True:
         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tEmail = " + str(email))
 
-    if traces is True:
-        print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tFolder = " + str(folder))
-
-    if traces is True:
-        print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tCc = " + str(cc))
-
     if command.upper() == "SEND":
         if to.upper() == "" or not "@" in to:
             return "ERROR: Invalid to parameter! Parameter = " + str(to)
@@ -229,17 +223,6 @@ def validate_project_parameters(parameters):
         
     if traces is True:
         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tBody = " + str(body))
-        
-    if unread is not "":
-        if unread.upper() == "TRUE":
-            unread = True
-        elif unread.upper() == "FALSE":
-            unread = False
-        else:
-            return "ERROR: Invalid unread parameter! Parameter = " + str(unread)
-            
-    if traces is True:
-        print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tUnread = " + str(unread))
 
     if command.upper() == "SEND" and attachments is not "":
         attachments = attachments.replace(";", ",")
@@ -252,6 +235,20 @@ def validate_project_parameters(parameters):
 
     if traces is True:
         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tAttachments = " + str(attachments))
+    
+    if draft is not "":
+        if draft.upper() == "TRUE":
+            draft = True
+        elif draft.upper() == "FALSE":
+            draft = False
+        else:
+            return "ERROR: Invalid draft parameter! Parameter = " + str(draft)
+
+    if traces is True:
+        print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tDraft = " + str(draft))
+
+    if traces is True:
+        print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tFolder = " + str(folder))
         
     if command.upper() == "GET" or command.upper() == "SAVE":
         if not os.path.exists(os.path.dirname(path)):
@@ -266,17 +263,6 @@ def validate_project_parameters(parameters):
 
     if traces is True:
         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tDownload path = " + str(path))
-    
-    if draft is not "":
-        if draft.upper() == "TRUE":
-            draft = True
-        elif draft.upper() == "FALSE":
-            draft = False
-        else:
-            return "ERROR: Invalid draft parameter! Parameter = " + str(draft)
-
-    if traces is True:
-        print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tDraft = " + str(draft))
 
     if command.upper() == "GET":
         if delimiter is "" or delimiter not in [",", ";", "|"]:
@@ -284,6 +270,17 @@ def validate_project_parameters(parameters):
 
     if traces is True:
         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tDelimiter = " + str(delimiter))
+        
+    if unread is not "":
+        if unread.upper() == "TRUE":
+            unread = True
+        elif unread.upper() == "FALSE":
+            unread = False
+        else:
+            return "ERROR: Invalid unread parameter! Parameter = " + str(unread)
+            
+    if traces is True:
+        print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tUnread = " + str(unread))
 
     if traces is True:
         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "=== * Parameters retrieved end * ===")
@@ -293,89 +290,96 @@ def validate_project_parameters(parameters):
         "command": command,
         "account": account,
         "email": email,
-        "folder": folder,
         "to": to,
         "cc": cc,
         "bcc": bcc,
         "subject": subject,
         "body": body,
-        "unread": unread,
         "attachments": attachments,
-        "path": path,
         "draft": draft,
+        "folder": folder,
+        "path": path,
         "delimiter": delimiter,
+        "unread": unread,
     }
     
     
-def get_emails(emails, delimiter):
+def get_emails(emails, path, delimiter):
+                
+    with open(path, 'w', newline='') as csv_file:
+        writer = csv.writer(csv_file, delimiter=delimiter, quotechar='"', quoting=csv.QUOTE_ALL)
+        writer.writerow(['email_id', 'received_date', 'received_time', 'unread', 'sender_name', 'sender_email', 'cc', 'subject', 'attachment_count', 'attachment_names'])
     
-    data = []
-    data.append(['email_id', 'received_date', 'received_time', 'unread', 'sender_name', 'sender_email', 'cc', 'subject', 'attachment_count', 'atachment_names'])
-    
-    for email in emails:
-        email_info = []
-        
-        email_info.append(email.EntryID)
-        email_info.append(str(email.ReceivedTime.month) + '/' + str(email.ReceivedTime.day) + '/' + str(email.ReceivedTime.year))
-        email_info.append(str(email.ReceivedTime.hour).zfill(2) + ':' + str(email.ReceivedTime.minute).zfill(2) + ':' + str(email.ReceivedTime.second).zfill(2))
-        email_info.append(str(email.UnRead))
-        try:
-            email_info.append(str(email.Sender))
-        except:
-            email_info.append("")
-        try:
-            email_info.append(str(email.Sender.GetExchangeUser().PrimarySmtpAddress))
-        except:
-            email_info.append(str(email.SenderEmailAddress))
-        email_info.append(email.Cc)
-        email_info.append(email.Subject)
-        email_info.append(email.Attachments.Count)
-        attachments = []
-        for attachment in email.Attachments:
-            attachments.append(attachment.DisplayName)
-        email_info.append([str(attachment).replace(delimiter, '') for attachment in attachments])
-        
-        email_info = [str(info).replace(delimiter, '') for info in email_info]
-        
-        data.append(email_info)
-    
-    return data
+        for email in emails:
+            email_info = []
+            
+            email_info.append(email.EntryID)
+            email_info.append(str(email.ReceivedTime.month) + '/' + str(email.ReceivedTime.day) + '/' + str(email.ReceivedTime.year))
+            email_info.append(str(email.ReceivedTime.hour).zfill(2) + ':' + str(email.ReceivedTime.minute).zfill(2) + ':' + str(email.ReceivedTime.second).zfill(2))
+            email_info.append(str(email.UnRead))
+            
+            try:
+                email_info.append(str(email.Sender))
+            except:
+                email_info.append("")
+            
+            try:
+                email_info.append(str(email.Sender.GetExchangeUser().PrimarySmtpAddress))
+            except:
+                email_info.append(str(email.SenderEmailAddress))
+            
+            email_info.append(email.Cc)
+            email_info.append(email.Subject)
+            email_info.append(email.Attachments.Count)
+            
+            attachments = []
+            for attachment in email.Attachments:
+                attachments.append(attachment.DisplayName)
+            attachments = str(attachments).replace(",", delimiter)
+            email_info.append(attachments)
+            
+            writer.writerow(email_info)
 
 
 def send_email(outlook_msg, to, cc, bcc, subject, body, attachments, draft, traces, reply=False, forward=False):
-    if not reply and not forward:
-        outlook_msg.Subject = subject
     
-    if not reply:
-        outlook_msg.To = to
-        outlook_msg.CC = cc
-        outlook_msg.BCC = bcc        
-
-    outlook_msg.GetInspector()
-    
-    outlook_msg_signature = outlook_msg.HTMLBody
-    outlook_msg.HTMLBody = "<BODY>" + body + "</BODY>" + outlook_msg_signature
-
-    for attachment in attachments:
-        outlook_msg.Attachments.Add(attachment)
-
-    if not draft:
-        if traces is True:
-            print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tAttempting to send email...")
-            
-        outlook_msg.Send()
+    try:
+        if not reply and not forward:
+            outlook_msg.Subject = subject
         
-        if traces is True:
-            print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tEmail sent!")
-            
-    else:
-        if traces is True:
-            print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tAttempting to save email as draft...")
-            
-        outlook_msg.Save()
+        if not reply:
+            outlook_msg.To = to
+            outlook_msg.CC = cc
+            outlook_msg.BCC = bcc        
+
+        outlook_msg.GetInspector()
         
-        if traces is True:
-            print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tEmail saved as draft!")
+        outlook_msg_signature = outlook_msg.HTMLBody
+        outlook_msg.HTMLBody = "<BODY>" + body + "</BODY>" + outlook_msg_signature
+
+        for attachment in attachments:
+            outlook_msg.Attachments.Add(attachment)
+
+        if not draft:
+            if traces is True:
+                print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tAttempting to send email...")
+                
+            outlook_msg.Send()
+            
+            if traces is True:
+                print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tEmail sent!")
+                
+        else:
+            if traces is True:
+                print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tAttempting to save email as draft...")
+                
+            outlook_msg.Save()
+            
+            if traces is True:
+                print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tEmail saved as draft!")
+                
+    except:
+        return None
             
     return outlook_msg
 
@@ -386,17 +390,17 @@ def execute_command(parameters):
     command = parameters["command"]
     account = parameters["account"]
     email = parameters["email"]
-    folder = parameters["folder"]
     to = parameters["to"]
     cc = parameters["cc"]
     bcc = parameters["bcc"]
     subject = parameters["subject"]
     body = parameters["body"]
-    unread = parameters["unread"]
     attachments = parameters["attachments"]
-    path = parameters["path"]
     draft = parameters["draft"]
+    folder = parameters["folder"]
+    path = parameters["path"]
     delimiter = parameters["delimiter"]
+    unread = parameters["unread"]
     
     outlook = win32.Dispatch('Outlook.Application')
     outlook_accounts = outlook.Session.Accounts
@@ -407,7 +411,6 @@ def execute_command(parameters):
             return f"ERROR: The specified account ({account}) is not one of the available accounts ({outlook_accounts_list})"
     
     try:
-
         if command.upper() == "SEND":
             if draft is "":
                 draft = False
@@ -429,8 +432,11 @@ def execute_command(parameters):
                             print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tSelecting account complete!")
                             
                         break
-                        
+               
             outlook_msg = send_email(outlook_msg, to, cc, bcc, subject, body, attachments, draft, traces)
+            
+            if outlook_msg is None:
+                return "ERROR: Failed to select the specified Outlook account!"
                 
             if traces is True:
                 print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + f"=== * Sending email end (draft: {str(draft)}) * ===")
@@ -470,6 +476,9 @@ def execute_command(parameters):
                     folders = folder.split("\\")
                     for folder in folders:
                         outlook_folder = outlook_folder.Folders(folder)
+                            
+                        if traces is True:
+                            print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + f"\t Folder '{outlook_folder.Name}' successfully selected...'")
                         
                     if traces is True:
                         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tSelecting folder complete!")
@@ -477,11 +486,7 @@ def execute_command(parameters):
                 if traces is True:
                     print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tLooping through emails in the folder...")
                         
-                data = get_emails(outlook_folder.Items, delimiter)
-                
-                with open(path, 'w', newline='') as csv_file:
-                    writer = csv.writer(csv_file, delimiter=delimiter, quotechar='"', quoting=csv.QUOTE_ALL)
-                    writer.writerows(data)
+                get_emails(outlook_folder.Items, path, delimiter)
                     
                 if traces is True:
                     print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tAll emails retrieved!")
@@ -500,7 +505,39 @@ def execute_command(parameters):
                     if traces is True:
                         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tAttempting to read email body...")
                         
-                    print(outlook_email.Body)
+                    outlook_email_body = outlook_email.Body
+                        
+                    if path is not "":
+                        if traces is True:
+                            print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tWriting the body to file...")
+                        
+                        try:
+                            with open(path, 'w') as file:
+                                file.write(outlook_email_body)
+                        except:
+                            if traces is True:
+                                print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tAs bytes, using unicode...")
+                                
+                            with open(path, 'wb') as file:
+                                file.write(outlook_email_body.encode('utf-8').strip())
+                                
+                        if traces is True:
+                            print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tWriting file complete!")
+                            
+                    else:
+                        if traces is True:
+                            print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tPrinting the body...")
+                            
+                        try:
+                            print(outlook_email_body)
+                        except:
+                            if traces is True:
+                                print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tAs bytes, using unicode...")
+                                
+                            print(outlook_email_body.encode('utf-8').strip())
+                                
+                        if traces is True:
+                            print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tPrinting file complete!")
                     
                     if traces is True:
                         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tEmail body read!")
@@ -517,6 +554,9 @@ def execute_command(parameters):
                         for folder in folders:
                             outlook_folder = outlook_folder.Folders(folder)
                             
+                            if traces is True:
+                                print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + f"\t Folder '{outlook_folder.Name}' successfully selected...'")
+                        
                         if traces is True:
                             print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "\tSelecting folder complete!")
                             
