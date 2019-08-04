@@ -402,7 +402,13 @@ def execute_command(parameters):
     delimiter = parameters["delimiter"]
     unread = parameters["unread"]
     
-    outlook = win32.Dispatch('Outlook.Application')
+    dispacted = False
+    try:
+        outlook = win32.GetObject(Class='Outlook.Application')
+    except:
+        dispacted = True
+        outlook = win32.Dispatch('Outlook.Application')
+    
     outlook_accounts = outlook.Session.Accounts
     outlook_accounts_list = [outlook_account.DisplayName for outlook_account in outlook_accounts]
     
@@ -641,6 +647,9 @@ def execute_command(parameters):
                         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ": " + "=== * Saving attachments end * ===")
                 
     except:
+        if dispacted:
+            outlook.Quit()
+            
         outlook_msg = None
         outlook_namespace = None
         outlook_folder = None
@@ -651,6 +660,9 @@ def execute_command(parameters):
         
         print(traceback.format_exc())
         return "ERROR: Unexpected issue!"
+    
+    if dispacted:
+        outlook.Quit()
     
     outlook_msg = None
     outlook_namespace = None
