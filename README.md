@@ -1,5 +1,7 @@
 # py-commands-outlook
 
+For support, please contact us: support@foxtrotalliance.com
+
 This program allows you to execute Outlook commands such as sending emails, getting all emails in a folder, reading emails, moving emails, and more. This is especially useful if you do not have access or is allowed to perform email actions using SMTP and IMAP server connections. You can run the program via the CMD or as part of an automation script in an RPA tool like Foxtrot. This solution is meant to supplement Foxtrots core email functionality and enable you to perform email automation via your local Outlook application instead of email server connections. The solution is written in Python using the module "pywin32". You can see the [full source code here](https://github.com/foxtrot-alliance/py-commands-outlook/blob/master/py-commands-outlook.py).
 
 ## Outlook warning
