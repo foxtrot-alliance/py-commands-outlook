@@ -6,7 +6,7 @@ This program allows you to execute Outlook commands such as sending emails, gett
 
 ## Outlook warning
 
-When using this program, you might experience a warning from Outlook or potentially be fully prevented from using the program. If so, please read [this official support article by Microsoft](https://support.microsoft.com/en-us/help/3189806/a-program-is-trying-to-send-an-e-mail-message-on-your-behalf-warning-i).
+When using this program, you might experience a warning from Outlook or potentially be fully prevented from using the program. If so, please read [this official support article by Microsoft](https://support.microsoft.com/en-us/help/3189806/a-program-is-trying-to-send-an-e-mail-message-on-your-behalf-warning-i). This is by no means uncommon, this is the same warning you would experience if automating Outlook via, example, VBA or VBScript.
 
 ## Installation
 
